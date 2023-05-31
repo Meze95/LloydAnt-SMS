@@ -1,0 +1,209 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - LloydAnt_SMS</title>
+    <link href="~/assets/css/home/aos.css" rel="stylesheet" />
+    <link href="~/assets/css/home/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/assets/css/home/style.css" rel="stylesheet" />
+    <link href="~/assets/css/home/bootstrap-icons/bootstrap-icons.css" rel="stylesheet" />	<!-- Fontawesome CSS -->
+    <link rel="stylesheet" href="~/assets/css/font-awesome.min.css">
+    <link rel="stylesheet" href="~/assets/css/sweetalert2.min.css">
+	<script>
+		function errorAlert(message) {
+			Swal.fire({
+				icon: 'error',
+				text: message,
+				confirmButtonColor: "#00A7EF",
+				timer: 30000,
+			})
+		}
+
+		function infoAlert(message) {
+			Swal.fire({
+				icon: 'info',
+				text: message,
+				confirmButtonColor: "#00A7EF",
+			})
+		}
+
+		function infoAlertWithStyles(message) {
+			Swal.fire({
+				title: 'Notification',
+				icon: 'info',
+				text: message,
+			})
+		}
+
+		function successAlert(message) {
+			Swal.fire({
+				icon: 'success',
+				text: message,
+				confirmButtonColor: "#00A7EF",
+				timer: 30000,
+			})
+		}
+
+		function newErrorAlert(message, url) {
+			Swal.fire({
+				icon: 'error',
+				text: message,
+				confirmButtonColor: "#00A7EF",
+			}).then((isConfirm) => {
+				if (isConfirm) {
+					location.reload(url);
+				}
+			})
+		}
+
+		function newSuccessAlert(message, url) {
+			Swal({
+				icon: 'success',
+				text: message,
+				confirmButtonColor: "#00A7EF",
+			}).then((isConfirm) => {
+				if (isConfirm) {
+					location.reload(url);
+				}
+			})
+		}
+
+		function successAlertWithRedirect(message, url) {
+			Swal.fire({
+				title: "Success",
+				text: message,
+				icon: "success",
+				timer: 30000,
+				confirmButtonColor: "#00A7EF",
+				overlay: "background - color: rgba(43, 165, 137, 0.45)",
+			}).then(function () {
+
+				location.href = url;
+			})
+		}
+
+		function errorAlertwithTwoButtons(yesUrl, noUrl, newUrl, errorTitle) {
+			Swal.fire({
+				title: errorTitle,
+				text: "",
+				icon: "error",
+				buttons: {
+					cancle: "No",
+					confirmButtonColor: "#00A7EF",
+					change: "Yes",
+					new: "Create Pin",
+				},
+			})
+				.then((status) => {
+					debugger;
+					switch (status) {
+						case "change":
+							location.href = yesUrl;
+							break;
+						case "new":
+							location.href = newUrl;
+							break;
+						default:
+							location.href = noUrl;
+					}
+				});
+		}
+
+		function SweeTest(yesUrl, noUrl) {
+			Swal.fire({
+				title: "Unverified E-mail Address",
+				text: "Check your inbox Or Change email",
+				type: "warning",
+				showCancelButton: true,
+				confirmButtonColor: "#00A7EF",
+				confirmButtonText: "Resend Email",
+				cancelButtonText: "Change Email",
+				cancelButtonColor: "#D3AF71",
+				closeOnConfirm: false,
+				closeOnCancel: false
+			})
+				.then((result) => {
+					debugger
+					if (result.isConfirmed) {
+						location.href = yesUrl
+					}
+					else {
+						location.href = noUrl
+					}
+
+				});
+		}
+	</script>
+</head>
+<body>
+    <!-- ======= Header ======= -->
+    <header id="header" class="fixed-top d-flex align-items-center">
+        <div class="container d-flex align-items-center justify-content-between">
+
+            <div class="logo">
+                <h1><a asp-action="index" asp-controller="Home">LloydAnt-SMS</a></h1>
+            </div>
+            <nav id="navbar" class="navbar">
+                <ul>
+                    <li><a class="nav-link scrollto active" asp-action="index" asp-controller="Home">Home</a></li>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <li><a class="nav-link scrollto" asp-action="Logout" asp-controller="Accounts">Logout</a></li>
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li><a class="nav-link scrollto " asp-action="Index" asp-controller="Admin">Dashboard</a></li>
+                        }
+                        else
+                        {
+                            <li><a class="nav-link scrollto " asp-action="Index" asp-controller="Student">Dashboard</a></li>
+                        }
+                    }
+                    else
+                    {
+                        <li><a class="nav-link scrollto" asp-action="Login" asp-controller="Accounts">Login</a></li>
+                        <li><a class="nav-link scrollto" asp-action="Register" asp-controller="Accounts">Register</a></li>
+                    }
+                </ul>
+                <i class="bi bi-list mobile-nav-toggle"></i>
+            </nav><!-- .navbar -->
+
+        </div>
+    </header>
+    <!-- End Header -->
+
+    <main role="main" id="main">
+        @RenderBody()
+    </main>
+
+    <!-- ======= Footer ======= -->
+    <footer id="footer" class="mt-5">
+        <div class="container">
+            <div class="row d-flex align-items-center">
+                <div class="col-lg-12 text-lg-left text-center">
+                    <div class="copyright">
+                        &copy; Copyright <strong>MTG</strong>. All Rights Reserved
+                    </div>
+                    <div class="credits">
+                        Designed by <a href="#">Martin Michael</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer><!-- End Footer -->
+
+    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+    <!-- Vendor JS Files -->
+    <script src="~/assets/js/popper.min.js"></script>
+    <script src="~/assets/js/jquery-3.5.1.min.js"></script>
+    <script src="~/assets/css/home/aos.js"></script>
+    <script src="~/assets/js/home/bootstrap.bundle.min.js"></script>
+    <script src="~/assets/js/home/glightbox.min.js"></script>
+    <script src="~/assets/js/home/swiper-bundle.min.js"></script>
+    <script src="~/assets/js/home/main.js"></script>
+    <script src="~/assets/js/site.js"></script>
+    <script src="~/assets/js/sweetalert2.all.min.js"></script>
+
+</body>
+</html>

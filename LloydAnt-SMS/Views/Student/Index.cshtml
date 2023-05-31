@@ -1,0 +1,14 @@
+﻿@model Core.Models.ApplicationUser
+@{
+	ViewData["Title"] = "Index";
+	Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<div class="alert alert-warning alert-dismissible fade show" role="alert">
+	<strong><i class="fa fa-warning"></i>!</strong> Your Application is still under review. You will be notified when a decision is taken after reviewing your submittion.
+	<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+		<span aria-hidden="true">×</span>
+	</button>
+</div>
+
+<h1>Weclome <span>@Model?.FirstName</span></h1>

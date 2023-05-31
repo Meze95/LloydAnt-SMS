@@ -1,0 +1,124 @@
+﻿@model Core.Models.ApplicationUser
+@{
+    ViewData["Title"] = "Register Courses";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<style>
+
+    body {
+        counter-reset: Serial; /* / Set the Serial counter to 0 /*/
+    }
+
+    tr td:first-child:before  {
+        counter-increment: Serial; /* / Increment the Serial counter /*/
+        content: counter(Serial); /*  / Display the counter /*/
+    }
+</style>
+<!-- Page Content -->
+<div class="content container-fluid">
+	<!-- Page Header -->
+	<div class="page-header">
+		<div class="row align-items-center">
+			<div class="col">
+				<h3 class="page-title">Courses</h3>
+				<ul class="breadcrumb">
+					<li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+					<li class="breadcrumb-item active">Courses</li>
+				</ul>
+			</div>
+			<div class="col-auto float-right ml-auto">
+				<a href="#" class="btn add-btn" data-toggle="modal" data-target="#add_Courses"><i class="fa fa-plus"></i> Add Courses</a>
+			</div>
+		</div>
+	</div>
+</div>
+	<!-- /Page Header -->
+					
+<div class="row">
+	<div class="col-md-12">
+		<div>
+			@if (Model.StudentsCourses.Count() > 0)
+			{
+				<table class="table table-striped custom-table mb-0 datatable">
+					<thead>
+						<tr>
+							<th style="width: 30px;">S/N</th>
+							<th>Account No.</th>
+							<th>Account Name</th>
+							<th>Balance</th>
+							<th class="text-right">Action</th>
+						</tr>
+					</thead>
+					<tbody>
+						@foreach (var course in Model.StudentsCourses)
+						{
+							<tr>
+								<td></td>
+								<td>@course.Course.Name</td>
+								<td>@course.Course.Description</td>
+								<td>@course.DateCreated</td>
+								<td class="text-right">
+								<div class="dropdown dropdown-action">
+										<a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+									<div class="dropdown-menu dropdown-menu-right">
+										<a class="dropdown-item" data-toggle="modal" data-target="#viewActivityReport">Activity Report</a>
+										<a class="dropdown-item" data-toggle="modal" data-target="#edit_Courses" onclick="MappId()"><i class="fa fa-pencil m-r-5"></i> Edit</a>
+										<a class="dropdown-item" data-toggle="modal" data-target="#delete_Courses" onclick="MappId('@course.Id')"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
+									</div>
+									</div>
+								</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			}
+			else
+			{ 
+				<div cclass="row p5 m-5">
+					<div class="col-md-12 text-center p-5 m5">
+						<h2>No Record Found</h2>
+					</div>
+				</div>
+			}
+			</div>
+		</div>
+	</div>
+</div>
+<!-- /Page Content -->
+
+<!-- Add Courses Modal -->
+<div id="add_Courses" class="modal custom-modal fade" role="dialog">
+	<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Add Courses</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="form-group row">
+					<div class="col-lg-12">
+						<select style="width: 100%"  class=" col-lg-10 col-12 form-control select p-3 bg-transparent" id="courseIds" multiple data-live-search="true" asp-items="@(new SelectList(@ViewBag.AllCourses, "Id", "Name" ))"></select>
+						<p>
+							<span class="text-danger"> Note:</span> you can select more than 1(one) Courses .
+						</p>
+					</div>
+				</div>
+				<div class="submit-section">
+					<button class="btn btn-primary submit-btn" onclick="CourseRegistration()">Submit</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- /Add Courses Modal -->
+
+@section scripts {
+    <script>
+        (function () {
+            $('select').select2();
+        })();
+    </script>
+}

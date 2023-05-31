@@ -1,0 +1,181 @@
+﻿@model IEnumerable<Core.Models.SchCourses>
+@{
+	ViewData["Title"] = "Manage Courses";
+	Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+
+    body {
+        counter-reset: Serial; /* / Set the Serial counter to 0 /*/
+    }
+
+    tr td:first-child:before  {
+        counter-increment: Serial; /* / Increment the Serial counter /*/
+        content: counter(Serial); /*  / Display the counter /*/
+    }
+</style>
+<!-- Page Content -->
+<div class="content container-fluid">
+	<!-- Page Header -->
+	<div class="page-header">
+		<div class="row align-items-center">
+			<div class="col">
+				<h3 class="page-title">Courses</h3>
+				<ul class="breadcrumb">
+					<li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+					<li class="breadcrumb-item active">Courses</li>
+				</ul>
+			</div>
+			<div class="col-auto float-right ml-auto">
+				<a href="#" class="btn add-btn" data-toggle="modal" data-target="#add_Courses"><i class="fa fa-plus"></i> Add Courses</a>
+			</div>
+		</div>
+	</div>
+</div>
+	<!-- /Page Header -->
+					
+<div class="row">
+	<div class="col-md-12">
+		<div>
+			@if (Model.Count() > 0)
+			{
+				<table class="table table-striped custom-table mb-0 datatable">
+					<thead>
+						<tr>
+							<th style="width: 30px;">S/N</th>
+							<th>Account No.</th>
+							<th>Account Name</th>
+							<th>Balance</th>
+							<th class="text-right">Action</th>
+						</tr>
+					</thead>
+					<tbody>
+						@foreach (var course in Model)
+						{
+							<tr>
+								<td></td>
+								<td>@course.Name</td>
+								<td>@course.Description</td>
+								<td>@course.CreatedBy</td>
+								<td>@course.DateCreated</td>
+								<td class="text-right">
+								<div class="dropdown dropdown-action">
+										<a href="#" class="action-icon dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+									<div class="dropdown-menu dropdown-menu-right">
+										<a class="dropdown-item" data-toggle="modal" data-target="#viewActivityReport">Activity Report</a>
+										<a class="dropdown-item" data-toggle="modal" data-target="#edit_Courses" onclick="MappId()"><i class="fa fa-pencil m-r-5"></i> Edit</a>
+										<a class="dropdown-item" data-toggle="modal" data-target="#delete_Courses" onclick="MappId('@course.Id')"><i class="fa fa-trash-o m-r-5"></i> Delete</a>
+									</div>
+									</div>
+								</td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			}
+			else
+			{ 
+				<div cclass="row p5 m-5">
+					<div class="col-md-12 text-center p-5 m5">
+						<h2>No Record Found</h2>
+					</div>
+				</div>
+			}
+			</div>
+		</div>
+	</div>
+</div>
+<!-- /Page Content -->
+
+<!-- Add Courses Modal -->
+<div id="add_Courses" class="modal custom-modal fade" role="dialog">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Add Courses</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="form-group">
+					<label>Course Name <span class="etext-danger">*</span></label>
+					<input class="form-control" type="text"  id="cName">
+				</div>
+				<div class="form-group">
+					<label>Description <span class="text-danger">*</span></label>
+					<input class="form-control" type="text"  id="desc">
+				</div>
+				<div class="submit-section">
+					<button class="btn btn-primary submit-btn" onclick="CreateCourse()" type="submit">Create</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- /Add Courses Modal -->
+<!-- Edit Courses Modal -->
+<div id="edit_Courses" class="modal custom-modal fade" role="dialog">
+	<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Edit Courses</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<div class="form-group">
+					<label>Account Number <span class="text-danger">*</span></label>
+					<input class="form-control" type="text" id="edit_accNo" readonly>
+				</div>
+				<div class="form-group">
+					<label>Account Name <span class="text-danger">*</span></label>
+					<input class="form-control" type="text" id="edit_accName">
+					<p class="text-danger" id="edit_accNameVDT" style="display: none;">Enter Account Name</p>
+				</div>
+				<div class="submit-section">
+					<button class="btn btn-primary submit-btn" onclick="EditCourses()" type="submit">Update</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- /Edit Courses Modal -->
+<!-- Delete Courses Modal -->
+<div class="modal custom-modal fade" id="delete_course" role="dialog">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-body">
+				<div class="form-header">
+					<h3>Delete Courses</h3>
+					<p>Are you sure want to delete?</p>
+				</div>
+				<div class="modal-btn delete-action">
+					<div class="row">
+						<div class="col-6">
+							<a class="btn btn-primary continue-btn" onclick="DeleteCourses()">Delete</a>
+						</div>
+						<div class="col-6">
+							<a href="javascript:void(0);" data-dismiss="modal" class="btn btn-primary cancel-btn">Cancel</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- /Delete Courses Modal -->
+
+<!-- Mapping of  Details For Editting and Deleting -->
+<input type="number" id="accID" hidden>
+<script>
+	function MappId(Id, AccountNumber, Name) {
+		debugger
+		$("#accID").val(Id);
+		$("#edit_accNo").val(AccountNumber);
+		$("#edit_accName").val(Name);
+	}
+</script>
+<!-- /Mapping of  Details For Editting and Deleting -->

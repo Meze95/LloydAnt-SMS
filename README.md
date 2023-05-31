@@ -1,5 +1,6 @@
 # LloydAnt-SMS
 Demo school management system
+NB: The project is running on .Net6 and for you to run it you will need to have .Net6 installed.
 
 Step1: Use the link below to create an admin account
 Admin Registration Link : https://localhost:7284/Accounts/RegisterAdmin

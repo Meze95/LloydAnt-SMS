@@ -19,10 +19,10 @@ namespace Logic.IHelper
 		Task<ApplicationUser> FindByIdAsync(string Id);
 		List<ApplicationUserViewModel> GetAllStudentsFromDB();
 		List<SchCourses> GetAllCourseFromDB();
-		List<SchCourses> DropdownOfCourses();
-
+		List<SchCourses> DropdownOfCourses(string userId);
 		Task<bool> NewCourseRegistration(SchCourses data);
 		Task<bool> NewStudentCourseRegistration(CourseResigtrationViewModel data);
-
-    }
+		List<StudentsCourses> GetAllStudentCourseFromDB();
+		List<StudentsCourses> GetStudentCourseByUserId(string userId);
+	}
 }

@@ -2,11 +2,13 @@
 using Core.Models;
 using Core.ViewModels;
 using Logic.IHelper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LloydAnt_SMS.Controllers
 {
-    public class AdminController : Controller
+	[Authorize(Roles = "Admin")]
+	public class AdminController : Controller
     {
 
 		private readonly AppDbContext _db;
@@ -25,6 +27,7 @@ namespace LloydAnt_SMS.Controllers
             model.Students = _userHelper.GetAllStudentsFromDB();
             return View(model);
         }
+
 		[HttpGet]
 		public IActionResult Courses()
 		{
@@ -43,7 +46,19 @@ namespace LloydAnt_SMS.Controllers
 				var checkIfExist = _db.SchCourses.Where(a => a.Name.ToLower() == course.Name.ToLower()).FirstOrDefault();
 				if (checkIfExist != null)
 				{
-					return Json(new { isError = true, msg = "Course Already Exist" });
+					if (checkIfExist.Deactivated)
+					{
+						checkIfExist.Deactivated = false;
+						checkIfExist.Description = course.Description;
+						_db.SchCourses.Update(checkIfExist);
+						_db.SaveChanges();
+
+						return Json(new { isError = false, msg = "Created Successfully" });
+					}
+					else
+					{
+						return Json(new { isError = true, msg = "Course Already Exist" });
+					}
 				}
 				if (user == null)
 				{
@@ -58,6 +73,31 @@ namespace LloydAnt_SMS.Controllers
 			}
 			return Json(new { isError = true, msg = "Failed" });
 
+		}
+
+		[HttpPost]
+		public async Task<JsonResult> DeletCourse(int id)
+		{
+			if (id > 0)
+			{
+				var checkIfExist = _db.SchCourses.Where(a => a.Id == id).FirstOrDefault();
+				if (checkIfExist != null)
+				{
+					checkIfExist.Deactivated = true;
+					_db.SchCourses.Update(checkIfExist);
+					_db.SaveChanges();
+					return Json(new { isError = false, msg = "Deleted Successfully" });
+				}
+			}
+			return Json(new { isError = true, msg = "Failed" });
+		}
+
+		[HttpGet]
+		public IActionResult StudentCourseRegistraion()
+		{
+			var model = new List<StudentsCourses>();
+			model = _userHelper.GetAllStudentCourseFromDB();
+			return View(model);
 		}
 	}
 }

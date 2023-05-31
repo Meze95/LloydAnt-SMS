@@ -25,7 +25,7 @@ namespace Logic.Helper
 
 		public async Task<ApplicationUser> FindByUserNameAsync(string userName)
 		{
-			return _userManager.Users.Where(u => u.UserName == userName)?.Include(c => c.StudentsCourses).FirstOrDefaultAsync().Result;
+			return _userManager.Users.Where(u => u.UserName == userName)?.Include(c => c.StudentsCourses.Where(a => a.Deactivated || !a.Deactivated)).FirstOrDefaultAsync().Result;
 		}
 		public async Task<ApplicationUser> FindByPhoneNumberAsync(string phoneNumber)
 		{
@@ -63,7 +63,7 @@ namespace Logic.Helper
 		public List<SchCourses> GetAllCourseFromDB()
 		{
 			var courses = new List<SchCourses>();
-			var allcourses = _db.SchCourses.Where(c => c.Id > 0).ToList();
+			var allcourses = _db.SchCourses.Where(c => c.Id > 0 && !c.Deactivated).Include(a => a.Admin).ToList();
 			if (allcourses.Any())
 			{
 				courses = allcourses;
@@ -90,16 +90,28 @@ namespace Logic.Helper
 			return false;
 		}
 
-        public List<SchCourses> DropdownOfCourses()
+        public List<SchCourses> DropdownOfCourses(string userId)
         {
             try
             {
+				var regCourses = _db.StudentsCourses.Where(u => u.UserId == userId && !u.Deactivated).ToList();
                 var common = new SchCourses()
                 {
                     Id = 0,
                     Name = "Select Courses"
                 };
                 var courses = _db.SchCourses.Where(x => x.Id != 0 && !x.Deactivated).OrderBy(p => p.Name).ToList();
+				if (regCourses.Any())
+				{
+					foreach (var item in regCourses)
+					{
+						var s = courses.Where(a => a.Id == item.CourseId).FirstOrDefault();
+						{
+							if (s != null)
+							{courses.Remove(s);}
+						}
+					}
+				}
                 courses.Insert(0, common);
                 return courses;
             }
@@ -137,17 +149,31 @@ namespace Logic.Helper
 				foreach (var c in data.CourseIds)
 				{
 					int id = Convert.ToInt32(c);
-					var checkIfRegistered = _db.StudentsCourses.Where(c => c.UserId == data.UserId && c.CourseId == id).FirstOrDefault();
-					if (checkIfRegistered == null) {
-                        var Course = new StudentsCourses()
+					if(id > 0)
+					{
+						var checkIfRegistered = _db.StudentsCourses.Where(c => c.UserId == data.UserId && c.CourseId == id).FirstOrDefault();
+						if (checkIfRegistered == null)
 						{
-							CourseId = id,
-							UserId = data.UserId,
-							DateCreated = DateTime.Now,
-							Deactivated = false,
-						};
-						listOfCourses.Add(Course);
-                    }
+							var Course = new StudentsCourses()
+							{
+								CourseId = id,
+								UserId = data.UserId,
+								DateCreated = DateTime.Now,
+								Deactivated = false,
+							};
+							listOfCourses.Add(Course);
+						}
+						else
+						{
+							if (checkIfRegistered.Deactivated)
+							{
+								checkIfRegistered.Deactivated = false;
+								_db.StudentsCourses.Update(checkIfRegistered);
+								_db.SaveChanges();
+							}
+						}
+					}
+					
 				}
                 if (listOfCourses.Any())
                 {
@@ -158,5 +184,27 @@ namespace Logic.Helper
 			}
 			return false;
         }
-    }
+
+		public List<StudentsCourses> GetAllStudentCourseFromDB()
+		{
+			var courses = new List<StudentsCourses>();
+			var allcourses = _db.StudentsCourses.Where(c => c.Id > 0 && !c.Deactivated).Include(a => a.Course).Include(a => a.User).ToList();
+			if (allcourses.Any())
+			{
+				courses = allcourses;
+			}
+			return courses;
+		}
+
+		public List<StudentsCourses> GetStudentCourseByUserId(string userId)
+		{
+			var courses = new List<StudentsCourses>();
+			var allcourses = _db.StudentsCourses.Where(c => c.Id > 0 && !c.Deactivated && c.UserId == userId).Include(a => a.Course).Include(a => a.User).ToList();
+			if (allcourses.Any())
+			{
+				courses = allcourses;
+			}
+			return courses;
+		}
+	}
 }

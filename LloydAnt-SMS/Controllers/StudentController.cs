@@ -2,11 +2,13 @@
 using Core.Models;
 using Core.ViewModels;
 using Logic.IHelper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LloydAnt_SMS.Controllers
 {
-    public class StudentController : Controller
+	[Authorize]
+	public class StudentController : Controller
     {
         private readonly AppDbContext _db;
         private readonly IUserHelper _userHelper;
@@ -28,9 +30,10 @@ namespace LloydAnt_SMS.Controllers
         [HttpGet]        
         public IActionResult CourseRegistration()
         {
-            ViewBag.AllCourses = _userHelper.DropdownOfCourses();
             var userData = _userHelper.FindByUserNameAsync(User.Identity.Name).Result;
-            return View(userData);
+			ViewBag.AllCourses = _userHelper.DropdownOfCourses(userData.Id);
+			var model = _userHelper.GetStudentCourseByUserId(userData.Id);
+			return View(model);
         }
 
         [HttpPost]
@@ -53,5 +56,22 @@ namespace LloydAnt_SMS.Controllers
             return Json(new { isError = true, msg = "Failed" });
 
         }
-    }
+
+		[HttpPost]
+		public async Task<JsonResult> DeletCourse(int id)
+		{
+			if (id > 0)
+			{
+				var checkIfExist = _db.StudentsCourses.Where(a => a.Id == id).FirstOrDefault();
+				if (checkIfExist != null)
+				{
+					checkIfExist.Deactivated = true;
+					_db.StudentsCourses.Update(checkIfExist);
+					_db.SaveChanges();
+					return Json(new { isError = false, msg = "Deleted Successfully" });
+				}
+			}
+			return Json(new { isError = true, msg = "Failed" });
+		}
+	}
 }

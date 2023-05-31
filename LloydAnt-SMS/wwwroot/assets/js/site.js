@@ -187,4 +187,73 @@ function CourseRegistration() {
     });
 }
  
-$('select').selectpicker();
+function MappId(Id) {
+    debugger
+    $("#courseId").val(Id);
+}
+
+function AdminCourseDelete() {
+    debugger;
+    var id = $("#courseId").val();
+    if (id != "") {
+        let coursId = id;
+        $.ajax({
+            type: 'POST',
+            dataType: 'Json',
+            url: '/Admin/DeletCourse',
+            data:
+            {
+                id: coursId
+            },
+            success: function (result) {
+                debugger;
+                if (!result.isError) {
+                    var url = window.location.href;
+                    successAlertWithRedirect(result.msg, url)
+                }
+                else {
+                    errorAlert(result.msg)
+                }
+            },
+            Error: function (ex) {
+                errorAlert(ex);
+            }
+        });
+    }
+    else {
+        errorAlert(result.msg)
+    }
+}
+
+function StudentCourseDelete() {
+    debugger;
+    var id = $("#courseId").val();
+    if (id != "") {
+        let coursId = id;
+        $.ajax({
+            type: 'POST',
+            dataType: 'Json',
+            url: '/Student/DeletCourse',
+            data:
+            {
+                id: coursId
+            },
+            success: function (result) {
+                debugger;
+                if (!result.isError) {
+                    var url = window.location.href;
+                    successAlertWithRedirect(result.msg, url)
+                }
+                else {
+                    errorAlert(result.msg)
+                }
+            },
+            Error: function (ex) {
+                errorAlert(ex);
+            }
+        });
+    }
+    else {
+        errorAlert(result.msg)
+    }
+}

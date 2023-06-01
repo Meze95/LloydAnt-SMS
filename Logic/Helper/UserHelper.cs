@@ -94,24 +94,13 @@ namespace Logic.Helper
         {
             try
             {
-				var regCourses = _db.StudentsCourses.Where(u => u.UserId == userId && !u.Deactivated).ToList();
+				var regCourses = _db.StudentsCourses.Where(u => u.UserId == userId && !u.Deactivated).Select(x => x.CourseId).ToList(); 
                 var common = new SchCourses()
                 {
                     Id = 0,
                     Name = "Select Courses"
                 };
-                var courses = _db.SchCourses.Where(x => x.Id != 0 && !x.Deactivated).OrderBy(p => p.Name).ToList();
-				if (regCourses.Any())
-				{
-					foreach (var item in regCourses)
-					{
-						var s = courses.Where(a => a.Id == item.CourseId).FirstOrDefault();
-						{
-							if (s != null)
-							{courses.Remove(s);}
-						}
-					}
-				}
+				var courses = _db.SchCourses.Where(x => x.Id != 0 && !x.Deactivated && !regCourses.Contains(x.Id)).OrderBy(p => p.Name).ToList();
                 courses.Insert(0, common);
                 return courses;
             }

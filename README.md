@@ -1,7 +1,8 @@
 # LloydAnt-SMS
 Demo school management system
-NB: The project is running on .Net6 and for you to run it you will need to have .Net6 installed.
 
+NB: The project is running on .Net6 and for you to run it you will need to have .Net6 installed.
+NB: Change the database name in the appsettings.json and appsettings.development.json from "MARTINS-PC" to your SQL server name.
 Step1: Use the link below to create an admin account
 Admin Registration Link : https://localhost:7284/Accounts/RegisterAdmin
 
